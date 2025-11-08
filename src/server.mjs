@@ -32,6 +32,19 @@ async function connectDB() {
 
 const app = express();
 
+//Logger middleware
+const logger = (req, res, next) => {
+    const start = Date.now();
+    res.on("finish", () => {
+        //Calculate how long the request took to process
+        const duration = Date.now - start;
+        console.log(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
+    });
+    next();
+};
+
+app.use(logger);
+
 const PORT = process.env.PORT || 5555;
 
 app.listen(PORT, async () => {
