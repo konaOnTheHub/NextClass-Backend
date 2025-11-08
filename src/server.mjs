@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors'
 import dotenv from 'dotenv';
 //Inject secret URI as an environment variable from .env file
 dotenv.config();
@@ -31,6 +32,24 @@ async function connectDB() {
 }
 
 const app = express();
+//Set up cors policy
+const allowedOrigins = [
+  'http://localhost:5173',        // for local dev
+  'https://yourfrontend.com'      // replace with your deployed frontend URL
+];
+
+app.use(cors({
+  origin: function(origin, callback){
+    // allow requests with no origin like mobile apps or curl
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 const PORT = process.env.PORT || 5555;
 
 //Logger middleware
