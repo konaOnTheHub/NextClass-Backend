@@ -31,21 +31,33 @@ async function connectDB() {
 }
 
 const app = express();
+const PORT = process.env.PORT || 5555;
 
 //Logger middleware
 const logger = (req, res, next) => {
-    const start = Date.now();
-    res.on("finish", () => {
-        //Calculate how long the request took to process
-        const duration = Date.now - start;
-        console.log(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
-    });
-    next();
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
+  });
+  next();
 };
 
 app.use(logger);
 
-const PORT = process.env.PORT || 5555;
+app.get("/lessons", async (req, res) =>{
+    try {
+        if(!lessonsCollection) {
+            return res.status(500).json({errorMsg: "Internal database error"})
+        }
+        const lessons = await lessonsCollection.find({}).toArray();
+        res.status(200).json(lessons);
+    } catch (err) {
+        console.error("Error fetching lessons:", err);
+        res.status(500).json({errorMsg: "Internal server error"});
+    };
+})
+
 
 app.listen(PORT, async () => {
     await connectDB();
