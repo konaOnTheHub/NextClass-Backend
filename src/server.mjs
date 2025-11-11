@@ -34,8 +34,7 @@ async function connectDB() {
 const app = express();
 //Set up cors policy
 const allowedOrigins = [
-  'http://localhost:5173',        // for local dev
-  'https://yourfrontend.com'      // replace with your deployed frontend URL
+  'http://localhost:5173', //Once its deployed to github pages change url
 ];
 
 app.use(cors({
