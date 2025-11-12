@@ -39,7 +39,8 @@ app.use(express.json());
 
 //Set up cors policy
 const allowedOrigins = [
-  'http://localhost:5173', //Once its deployed to github pages change url
+  'http://localhost:5173',
+  'https://konaonthehub.github.io' 
 ];
 
 app.use(cors({
