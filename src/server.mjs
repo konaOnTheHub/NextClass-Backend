@@ -148,6 +148,31 @@ app.put("/lesson/:id/:attribute", async (req, res) => {
   }
 })
 
+app.get("/search", async (req, res) => {
+  try {
+    const query = req.query.q;
+    
+    if (!lessonsCollection) {
+      return res.status(500).json({ errorMsg: "Internal database error" });
+    }
+
+    // Search across lesson fields (name, description, etc.)
+    // Adjust field names to match your actual lesson schema
+    const results = await lessonsCollection.find({
+      $or: [
+        { subject: { $regex: query, $options: "i" } },
+        { location: { $regex: query, $options: "i" } },
+        { price: Number(query) }, 
+        { spaces: Number(query)}
+      ]
+    }).toArray();
+
+    return res.status(200).json(results);
+  } catch (err) {
+    console.error("Error searching lessons:", err);
+    return res.status(500).json({ errorMsg: "Internal server error" });
+  }
+});
 
 app.listen(PORT, async () => {
   await connectDB();
